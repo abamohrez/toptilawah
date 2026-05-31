@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مساعد التغريدة اليومية | Top Tilawah</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1209;--parchment:#f7f0e2;--gold:#c8922a;--gold-light:#e8b84b;--gold-pale:#f5e6c0;--green:#2d5a3d;--green-light:#3d7a53;--green-pale:#e8f2ec;--shadow:rgba(26,18,9,.15);--border:#d4b896;--red:#c62828;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Cairo',sans-serif;background:var(--parchment);color:var(--ink);min-height:100vh;}
+header{background:var(--green);color:white;text-align:center;padding:18px 20px 14px;position:relative;}
+header .bismillah{font-family:'Amiri',serif;font-size:clamp(17px,4vw,24px);color:var(--gold-light);margin-bottom:3px;}
+header h1{font-size:clamp(13px,3vw,18px);font-weight:700;}
+header p{font-size:11px;opacity:.65;margin-top:2px;}
+.tabs{display:flex;background:var(--green);border-top:1px solid rgba(255,255,255,.1);overflow-x:auto;}
+.tab-btn{flex:1;min-width:65px;padding:10px 4px;background:none;border:none;color:rgba(255,255,255,.6);font-family:'Cairo',sans-serif;font-size:11px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;}
+.tab-btn.active{color:var(--gold-light);border-bottom-color:var(--gold-light);background:rgba(255,255,255,.05);}
+.tab-btn:hover:not(.active){color:white;}
+main{max-width:700px;margin:0 auto;padding:14px 12px 80px;}
+.section{display:none;}.section.active{display:block;}
+.card{background:white;border-radius:12px;border:1px solid var(--border);padding:16px;margin-bottom:13px;box-shadow:0 2px 8px var(--shadow);}
+.card-title{font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:11px;display:flex;align-items:center;gap:6px;}
+.card-title::before{content:'';display:inline-block;width:4px;height:14px;background:var(--gold);border-radius:2px;}
+label{display:block;font-size:12px;font-weight:600;color:#555;margin-bottom:4px;}
+select,input[type=number],input[type=text],textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Cairo',sans-serif;font-size:14px;background:var(--parchment);color:var(--ink);outline:none;transition:border-color .2s;margin-bottom:10px;}
+select:focus,input:focus,textarea:focus{border-color:var(--green);background:white;}
+textarea{resize:vertical;min-height:80px;direction:rtl;line-height:1.8;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:480px){.row{grid-template-columns:1fr;}}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:10px 16px;border-radius:8px;border:none;font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-primary{background:var(--green);color:white;width:100%;margin-top:4px;}
+.btn-primary:hover{background:var(--green-light);}
+.btn-primary:disabled{background:#aaa;cursor:not-allowed;}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--ink);font-size:12px;padding:7px 12px;}
+.btn-outline:hover{border-color:var(--green);color:var(--green);}
+.btn-copy{background:var(--gold-pale);border:1px solid var(--gold);color:var(--ink);font-size:12px;padding:7px 12px;border-radius:6px;cursor:pointer;font-family:'Cairo',sans-serif;font-weight:600;transition:all .2s;}
+.btn-copy:hover{background:var(--gold);color:white;}
+.btn-gold{background:var(--gold);color:white;border:none;}
+.btn-gold:hover{background:var(--gold-light);}
+.btn-danger{background:#ffebee;border:1px solid #ef9a9a;color:var(--red);font-size:12px;padding:7px 12px;border-radius:6px;cursor:pointer;font-family:'Cairo',sans-serif;font-weight:600;}
+.ayah-box{background:var(--green-pale);border:1px solid #b8d4c0;border-radius:10px;padding:14px;margin-bottom:11px;text-align:center;}
+.ayah-arabic{font-family:'Amiri',serif;font-size:clamp(18px,4.5vw,26px);line-height:2.1;color:var(--ink);direction:rtl;}
+.ayah-ref{font-size:11px;color:var(--green);font-weight:700;margin-top:5px;}
+.tafsir-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.tafsir-tab{padding:5px 12px;border-radius:16px;border:1.5px solid var(--border);background:white;font-family:'Cairo',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;color:#666;}
+.tafsir-tab.active{background:var(--green);color:white;border-color:var(--green);}
+.tafsir-box{background:#fffdf7;border:1px solid var(--border);border-right:4px solid var(--gold);border-radius:8px;padding:14px;font-family:'Amiri',serif;font-size:15px;line-height:2.1;direction:rtl;color:var(--ink);max-height:220px;overflow-y:auto;margin-bottom:11px;}
+.tweet-wrapper{border:2px solid #e0e0e0;border-radius:14px;overflow:hidden;margin-bottom:8px;}
+.tweet-header{background:#f5f8fa;padding:9px 13px;display:flex;align-items:center;gap:9px;border-bottom:1px solid #e0e0e0;}
+.tweet-avatar{width:34px;height:34px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;flex-shrink:0;}
+.tweet-username{font-size:13px;font-weight:700;}
+.tweet-handle{font-size:11px;color:#888;}
+.tweet-body{background:white;padding:13px 15px;font-family:'Cairo',sans-serif;font-size:14px;line-height:1.9;direction:rtl;min-height:100px;white-space:pre-wrap;word-break:break-word;color:var(--ink);outline:none;border:none;}
+.tweet-body:focus{background:#fffdf7;}
+.tweet-footer{background:#f5f8fa;padding:7px 13px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #e0e0e0;}
+.char-count{font-size:11px;color:#888;}.char-count.over{color:var(--red);font-weight:700;}
+.loading{display:flex;align-items:center;justify-content:center;gap:9px;padding:18px;color:var(--green);font-size:13px;}
+.spinner{width:20px;height:20px;border:3px solid var(--gold-pale);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.hidden{display:none!important;}
+.actions-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px;}
+.alert{padding:9px 12px;border-radius:8px;font-size:12px;margin-bottom:11px;line-height:1.6;}
+.alert-info{background:var(--gold-pale);color:#7a5a1a;border:1px solid var(--gold);}
+.alert-success{background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;}
+.alert-error{background:#ffebee;color:var(--red);border:1px solid #ef9a9a;}
+.progress-steps{display:flex;margin-bottom:14px;border-radius:8px;overflow:hidden;border:1px solid var(--border);}
+.progress-step{flex:1;text-align:center;padding:6px 3px;font-size:10px;font-weight:700;background:white;color:#aaa;border-left:1px solid var(--border);transition:all .3s;}
+.progress-step:first-child{border-left:none;}
+.progress-step.done{background:var(--green-pale);color:var(--green);}
+.progress-step.active{background:var(--green);color:white;}
+.reciter-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:11px;}
+.reciter-chip{padding:5px 11px;border-radius:20px;border:1.5px solid var(--border);background:white;font-family:'Cairo',sans-serif;font-size:11px;cursor:pointer;transition:all .2s;color:var(--ink);display:flex;align-items:center;gap:4px;}
+.reciter-chip.selected{background:var(--green);color:white;border-color:var(--green);}
+.add-row{display:flex;gap:7px;margin-bottom:11px;}
+.add-row input{margin-bottom:0;flex:1;}
+.x-search-link{display:flex;align-items:center;gap:9px;background:var(--parchment);border:1px solid var(--border);border-radius:8px;padding:9px 12px;text-decoration:none;color:var(--ink);font-size:12px;transition:all .2s;margin-bottom:6px;}
+.x-search-link:hover{border-color:var(--green);background:var(--green-pale);}
+.x-badge{background:#000;color:white;border-radius:4px;padding:2px 8px;font-size:10px;font-weight:700;white-space:nowrap;}
+.platform-badge{background:var(--green);color:white;border-radius:4px;padding:2px 8px;font-size:10px;font-weight:700;white-space:nowrap;}
+.platform-badge.tiktok{background:#010101;}
+.platform-badge.yt{background:#c4302b;}
+.x-accounts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:12px;}
+.x-account-card{background:white;border:1.5px solid var(--border);border-radius:10px;padding:10px;text-align:center;transition:all .2s;}
+.x-account-card:hover{border-color:var(--green);background:var(--green-pale);}
+.x-account-card a{text-decoration:none;color:var(--ink);}
+.x-account-handle{font-size:12px;font-weight:700;color:var(--green);margin-bottom:2px;}
+.x-account-desc{font-size:10px;color:#888;}
+.section-label{font-size:11px;font-weight:700;color:#888;margin:12px 0 7px;text-transform:uppercase;letter-spacing:.5px;}
+.suggestion-card{border:1.5px dashed var(--gold);border-radius:10px;padding:13px;background:#fffdf7;margin-bottom:9px;cursor:pointer;transition:all .2s;}
+.suggestion-card:hover{background:var(--gold-pale);border-style:solid;}
+.suggestion-card .sc-name{font-weight:700;color:var(--green);font-size:13px;}
+.suggestion-card .sc-reason{font-size:11px;color:#666;margin-top:3px;}
+.suggestion-card .sc-arabic{font-family:'Amiri',serif;font-size:16px;direction:rtl;margin-top:6px;color:var(--ink);line-height:1.9;}
+.history-item{display:flex;align-items:flex-start;gap:9px;background:white;border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;}
+.history-ref{background:var(--green);color:white;border-radius:6px;padding:3px 8px;font-size:10px;font-weight:700;white-space:nowrap;}
+.history-text{font-family:'Amiri',serif;font-size:13px;line-height:1.8;direction:rtl;flex:1;color:var(--ink);}
+.history-date{font-size:10px;color:#aaa;margin-top:2px;}
+.empty{text-align:center;padding:32px;color:#aaa;font-size:13px;}
+.empty .icon{font-size:30px;margin-bottom:7px;}
+.flex-between{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;}
+.pdf-drop{border:2px dashed var(--border);border-radius:10px;padding:22px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:11px;}
+.pdf-drop:hover,.pdf-drop.dragover{border-color:var(--green);background:var(--green-pale);}
+.pdf-drop .icon{font-size:32px;margin-bottom:6px;}
+.pdf-list{max-height:200px;overflow-y:auto;margin-bottom:10px;}
+.pdf-item{display:flex;align-items:center;gap:8px;background:var(--parchment);border:1px solid var(--border);border-radius:7px;padding:8px 11px;margin-bottom:6px;font-size:12px;}
+.pdf-item .pname{flex:1;font-weight:600;}
+.pdf-item .psize{color:#888;font-size:10px;}
+.pdf-item .pstat{font-size:10px;font-weight:700;}
+.pdf-item .pstat.done{color:var(--green);}
+.pdf-item .pstat.proc{color:var(--gold);}
+.pdf-item .pstat.err{color:var(--red);}
+.pdf-summary{background:var(--green-pale);border:1px solid #b8d4c0;border-radius:8px;padding:11px;font-size:12px;color:var(--green);font-weight:600;margin-bottom:10px;}
+.video-editor{background:#111;border-radius:12px;overflow:hidden;margin-bottom:13px;}
+.video-wrap{background:#000;position:relative;padding-top:56.25%;}
+.video-wrap video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:none;}
+.video-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#555;gap:7px;text-align:center;padding:20px;}
+.video-placeholder .icon{font-size:38px;}
+.upload-area{display:flex;justify-content:center;padding:14px;}
+.btn-upload{background:var(--gold);color:white;border:none;border-radius:8px;padding:10px 22px;font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;}
+.vc{background:#1a1a1a;padding:13px;}
+.tl-label{color:#ccc;font-size:11px;font-weight:700;margin-bottom:7px;}
+.tl-wrap{position:relative;height:56px;background:#2a2a2a;border-radius:8px;margin-bottom:13px;overflow:hidden;}
+.tl-bar{position:absolute;inset:0;background:linear-gradient(90deg,#1a3a2a,#2d5a3d);}
+.tl-wave{position:absolute;inset:0;display:flex;align-items:center;gap:1px;padding:0 4px;}
+.tl-wave div{flex:1;background:rgba(200,146,42,.4);border-radius:1px;}
+.trim-sel{position:absolute;top:0;bottom:0;background:rgba(200,146,42,.25);border-top:2px solid var(--gold);border-bottom:2px solid var(--gold);pointer-events:none;}
+.trim-h{position:absolute;top:0;bottom:0;width:4px;background:var(--gold);cursor:ew-resize;z-index:10;touch-action:none;}
+.trim-h::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:13px;height:13px;background:var(--gold);border-radius:50%;border:2px solid white;}
+.trim-h.left{left:0;}.trim-h.right{right:0;}
+.time-row{display:flex;justify-content:space-between;color:#888;font-size:11px;margin-bottom:9px;font-family:monospace;}
+.play-row{display:flex;align-items:center;gap:9px;margin-bottom:11px;}
+.btn-play{width:36px;height:36px;border-radius:50%;background:var(--gold);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.pb-wrap{flex:1;height:5px;background:#333;border-radius:3px;cursor:pointer;}
+.pb-fill{height:100%;background:var(--gold-light);border-radius:3px;width:0%;}
+.cur-time{color:#aaa;font-size:11px;font-family:monospace;white-space:nowrap;}
+.trim-inputs{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px;}
+.tig{display:flex;flex-direction:column;gap:3px;}
+.tig label{color:#aaa;font-size:10px;font-weight:700;}
+.tig input{background:#2a2a2a;border:1px solid #444;color:white;border-radius:6px;padding:6px 9px;font-size:12px;font-family:monospace;margin-bottom:0;}
+.tig input:focus{border-color:var(--gold);}
+.exp-row{display:flex;gap:7px;}
+.btn-exp{flex:1;background:var(--green);color:white;border:none;border-radius:8px;padding:10px;font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer;}
+.exp-prog{margin-top:9px;display:none;}
+.exp-bar{height:5px;background:#333;border-radius:3px;overflow:hidden;margin-bottom:5px;}
+.exp-fill{height:100%;background:var(--gold);border-radius:3px;width:0%;transition:width .3s;}
+.exp-stat{color:#aaa;font-size:11px;text-align:center;}
+.dl-link{display:flex;align-items:center;justify-content:center;gap:7px;background:var(--green-pale);border:1px solid var(--green);border-radius:8px;padding:11px;color:var(--green);text-decoration:none;font-weight:700;font-size:13px;margin-top:9px;}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--green);color:white;padding:9px 18px;border-radius:8px;font-size:12px;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:9999;white-space:nowrap;animation:ti .3s ease;}
+@keyframes ti{from{opacity:0;transform:translate(-50%,10px);}to{opacity:1;transform:translate(-50%,0);}}
+</style>
+</head>
+<body>
+<header>
+  <div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+  <h1>مساعد تغريدة التلاوة اليومية</h1>
+  <p>@toptilawah · ابن عاشور · ابن كثير · الطبري · السعدي · القرطبي · البغوي</p>
+</header>
+<div class="tabs">
+  <button class="tab-btn active" data-tab="compose" onclick="showTab('compose',this)">✍️ إنشاء</button>
+  <button class="tab-btn" data-tab="suggest" onclick="showTab('suggest',this)">💡 اقتراح</button>
+  <button class="tab-btn" data-tab="video" onclick="showTab('video',this)">✂️ فيديو</button>
+  <button class="tab-btn" data-tab="xsearch" onclick="showTab('xsearch',this)">🔍 X بحث</button>
+  <button class="tab-btn" data-tab="history" onclick="showTab('history',this)">📋 سجل</button>
+  <button class="tab-btn" data-tab="settings" onclick="showTab('settings',this)">⚙️ إعدادات</button>
+</div>
+<main>
+
+<!-- COMPOSE -->
+<div id="tab-compose" class="section active">
+  <div class="progress-steps">
+    <div class="progress-step active" id="ps1">١· الآية</div>
+    <div class="progress-step" id="ps2">٢· التفسير</div>
+    <div class="progress-step" id="ps3">٣· التغريدة</div>
+  </div>
+  <div class="card" id="c1">
+    <div class="card-title">اختر الآية الكريمة</div>
+    <div class="row">
+      <div><label>السورة</label><select id="surahSel" onchange="onSurahChange()"><option value="">-- اختر السورة --</option></select></div>
+      <div><label>رقم الآية</label><input type="number" id="ayahNum" min="1" value="1"></div>
+    </div>
+    <div id="c1err" class="alert alert-error hidden"></div>
+    <button class="btn btn-primary" id="fetchBtn" onclick="fetchAyah()">🔍 جلب الآية والتفسير</button>
+  </div>
+  <div class="card hidden" id="c2">
+    <div class="card-title">نص الآية</div>
+    <div class="ayah-box"><div class="ayah-arabic" id="ayahTxt"></div><div class="ayah-ref" id="ayahRef"></div></div>
+    <div class="card-title">اختر التفسير</div>
+    <div class="tafsir-tabs" id="tafsirTabs"></div>
+    <div id="tafsirLoad" class="loading hidden"><div class="spinner"></div><span id="tafsirMsg">جارٍ التوليد…</span></div>
+    <div id="tafsirErr" class="alert alert-error hidden"></div>
+    <div class="tafsir-box hidden" id="tafsirTxt"></div>
+    <div class="actions-row">
+      <button class="btn-copy hidden" id="copyTafsirBtn" onclick="copyEl('tafsirTxt')">📋 نسخ التفسير</button>
+      <button class="btn btn-outline" onclick="resetStep1()">← تغيير الآية</button>
+      <button class="btn btn-gold hidden" id="goTweetBtn" onclick="goToTweet()">✍️ صياغة التغريدة</button>
+    </div>
+  </div>
+  <div class="card hidden" id="c3">
+    <div class="card-title">التغريدة الجاهزة</div>
+    <div id="tweetLoad" class="loading hidden"><div class="spinner"></div><span>جارٍ الصياغة…</span></div>
+    <div id="tweetErr" class="alert alert-error hidden"></div>
+    <div id="tweetArea" class="hidden">
+      <div class="tweet-wrapper">
+        <div class="tweet-header">
+          <div class="tweet-avatar">T</div>
+          <div><div class="tweet-username" id="twName">Top Tilawah</div><div class="tweet-handle" id="twHandle">@toptilawah</div></div>
+        </div>
+        <div class="tweet-body" id="tweetBody" contenteditable="true" oninput="updateCharCount()" dir="rtl"></div>
+        <div class="tweet-footer"><span class="char-count" id="charCount">0 حرف</span><span style="font-size:10px;color:#aaa">قابل للتعديل</span></div>
+      </div>
+      <div class="actions-row">
+        <button class="btn-copy" onclick="copyTweet()">📋 نسخ</button>
+        <button class="btn btn-outline" onclick="genTweet()">🔄 إعادة</button>
+        <button class="btn btn-primary" onclick="saveThenSearch()" style="width:auto;flex:1">حفظ والبحث عن فيديو ←</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SUGGEST -->
+<div id="tab-suggest" class="section">
+  <div class="card">
+    <div class="card-title">اقتراح آية اليوم</div>
+    <label>الموضوع</label>
+    <select id="topicSel">
+      <option>الصبر والثبات</option><option>التوكل على الله</option><option>الرحمة والمغفرة</option>
+      <option>الشكر والامتنان</option><option>الدعاء والتضرع</option><option>الأمل ورفع الهمة</option>
+      <option>ذكر الله والطمأنينة</option><option>الجنة والآخرة</option><option>التوبة والاستغفار</option>
+      <option>الهداية والنور</option><option>أسماء الله وصفاته</option><option>بر الوالدين</option>
+    </select>
+    <button class="btn btn-primary" onclick="getSuggestions()">✨ اقترح آيات</button>
+  </div>
+  <div id="suggestLoad" class="loading hidden"><div class="spinner"></div><span>جارٍ البحث…</span></div>
+  <div id="suggestBox"></div>
+</div>
+
+<!-- VIDEO -->
+<div id="tab-video" class="section">
+  <div class="card">
+    <div class="card-title">القراء</div>
+    <div class="reciter-chips" id="reciterChips"></div>
+    <div class="add-row">
+      <input type="text" id="newReciter" placeholder="أضف قارئاً جديداً…" onkeydown="if(event.key==='Enter')addReciter()">
+      <button class="btn btn-outline" onclick="addReciter()">+ إضافة</button>
+    </div>
+    <button class="btn btn-primary" onclick="genVideoLinks()">🔗 روابط البحث</button>
+  </div>
+  <div id="videoLinksBox"></div>
+  <div class="card">
+    <div class="card-title">✂️ محرر الفيديو المدمج</div>
+    <p style="font-size:12px;color:#666;margin-bottom:11px">ارفع الفيديو ثم حدد المقطع بالسحب أو بالأرقام.</p>
+    <input type="file" id="videoFile" accept="video/*" style="display:none" onchange="loadVid(this)">
+    <div class="video-editor">
+      <div class="video-wrap">
+        <video id="videoEl" preload="metadata" onloadedmetadata="onVidLoaded()" ontimeupdate="onVidTime()"></video>
+        <div class="video-placeholder" id="vidPlaceholder"><div class="icon">🎬</div><p>ارفع ملف الفيديو<br><span style="font-size:10px;color:#444">MP4 · MOV · WebM</span></p></div>
+      </div>
+      <div class="upload-area"><button class="btn-upload" onclick="document.getElementById('videoFile').click()">📂 اختر ملف الفيديو</button></div>
+      <div class="vc hidden" id="vidControls">
+        <div class="play-row">
+          <button class="btn-play" id="playBtn" onclick="togglePlay()">▶️</button>
+          <div class="pb-wrap" onclick="seekVid(event)"><div class="pb-fill" id="pbFill"></div></div>
+          <span class="cur-time" id="curTime">0:00</span>
+        </div>
+        <div class="tl-label">🎚 شريط القص — اسحب المقابض الذهبية</div>
+        <div class="tl-wrap" id="tlWrap">
+          <div class="tl-bar"></div>
+          <div class="tl-wave" id="tlWave"></div>
+          <div class="trim-sel" id="trimSel"></div>
+          <div class="trim-h left" id="hLeft" onmousedown="startDrag('left',event)" ontouchstart="startDrag('left',event)"></div>
+          <div class="trim-h right" id="hRight" onmousedown="startDrag('right',event)" ontouchstart="startDrag('right',event)"></div>
+        </div>
+        <div class="time-row"><span id="tsLabel">البداية: 0:00</span><span id="tdLabel">المدة: 0:00</span><span id="teLabel">النهاية: 0:00</span></div>
+        <div class="trim-inputs">
+          <div class="tig"><label>البداية (ثانية)</label><input type="number" id="tsInput" min="0" step="0.5" value="0" oninput="onTrimChange()"></div>
+          <div class="tig"><label>النهاية (ثانية)</label><input type="number" id="teInput" min="0" step="0.5" value="0" oninput="onTrimChange()"></div>
+        </div>
+        <div class="exp-row">
+          <button class="btn-exp" onclick="previewTrim()">▶ معاينة</button>
+          <button class="btn-exp" onclick="exportTrim()" style="background:var(--gold)">⬇ تصدير المقطع</button>
+        </div>
+        <div class="exp-prog" id="expProg"><div class="exp-bar"><div class="exp-fill" id="expFill"></div></div><div class="exp-stat" id="expStat"></div></div>
+        <div id="dlArea"></div>
+      </div>
+    </div>
+    <div class="alert alert-info" style="margin-top:7px;font-size:11px">
+      💡 حمّل الفيديو من X عبر <a href="https://saver.gg" target="_blank" style="color:var(--green);font-weight:700">saver.gg</a> أو من TikTok عبر <a href="https://snapsave.app" target="_blank" style="color:var(--green);font-weight:700">snapsave.app</a>
+    </div>
+  </div>
+</div>
+
+<!-- X SEARCH -->
+<div id="tab-xsearch" class="section">
+  <div class="card">
+    <div class="card-title">🔍 البحث في حسابات التلاوة على X</div>
+    <div id="xAyahBadge" class="alert alert-info hidden"></div>
+    <button class="btn btn-primary" onclick="genXLinks()" style="margin-bottom:12px">🔗 توليد روابط البحث</button>
+    <div class="section-label">الحسابات المتابَعة</div>
+    <div class="x-accounts-grid" id="xAccountsGrid"></div>
+    <div id="xLinksBox"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">➕ إضافة حساب جديد</div>
+    <div class="add-row">
+      <input type="text" id="newXAcc" placeholder="مثال: @QuranReciter" onkeydown="if(event.key==='Enter')addXAccount()">
+      <button class="btn btn-outline" onclick="addXAccount()">إضافة</button>
+    </div>
+    <div id="xAccList"></div>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div id="tab-history" class="section">
+  <div class="flex-between">
+    <div class="card-title" style="margin-bottom:0">الآيات المنشورة</div>
+    <button class="btn btn-danger" onclick="clearHistory()">🗑 مسح</button>
+  </div>
+  <div style="height:9px"></div>
+  <div id="histBox"><div class="empty"><div class="icon">📜</div>لا توجد آيات بعد</div></div>
+</div>
+
+<!-- SETTINGS -->
+<div id="tab-settings" class="section">
+  <div class="card">
+    <div class="card-title">📚 مكتبة تفسير ابن عاشور (PDF)</div>
+    <p style="font-size:12px;color:#666;margin-bottom:11px;line-height:1.8">ارفع ملفات PDF لتفسير التحرير والتنوير. يمكنك رفع الـ 90 مجلد دفعةً واحدة.</p>
+    <input type="file" id="pdfInput" accept=".pdf" multiple style="display:none" onchange="handlePDFs(this)">
+    <div class="pdf-drop" id="pdfDrop" onclick="document.getElementById('pdfInput').click()">
+      <div class="icon">📄</div>
+      <p><strong>اضغط لرفع ملفات PDF</strong><br>أو اسحبها وأفلتها هنا</p>
+    </div>
+    <div id="pdfSummary" class="hidden"></div>
+    <div class="pdf-list" id="pdfList"></div>
+    <div style="display:flex;gap:8px"><button class="btn btn-outline" onclick="clearPDFs()" style="font-size:11px">🗑 مسح</button><button class="btn btn-outline" onclick="testPDF()" style="font-size:11px">🔎 اختبار</button></div>
+  </div>
+  <div class="card">
+    <div class="card-title">👤 إعدادات الحساب</div>
+    <label>اسم الحساب على X</label><input type="text" id="accHandle" placeholder="@toptilawah">
+    <label>الاسم المعروض</label><input type="text" id="accName" placeholder="Top Tilawah">
+    <button class="btn btn-primary" onclick="saveSettings()">💾 حفظ الإعدادات</button>
+  </div>
+  <div class="card">
+    <div class="card-title">📖 التفسير الافتراضي</div>
+    <select id="defTafsir">
+      <option value="ibn_ashur">ابن عاشور — التحرير والتنوير</option>
+      <option value="ibn_kathir">ابن كثير</option>
+      <option value="tabari">الطبري — جامع البيان</option>
+      <option value="saadi">السعدي — تيسير الكريم الرحمن</option>
+      <option value="qurtubi">القرطبي — الجامع لأحكام القرآن</option>
+      <option value="baghawi">البغوي — معالم التنزيل</option>
+    </select>
+    <button class="btn btn-primary" onclick="saveSettings()">💾 حفظ</button>
+  </div>
+  <div class="card">
+    <div class="card-title">🎙 القراء المحفوظون</div>
+    <div class="reciter-chips" id="settingsChips"></div>
+    <div class="add-row">
+      <input type="text" id="settingsNewReciter" placeholder="أضف قارئاً…" onkeydown="if(event.key==='Enter')addReciterSettings()">
+      <button class="btn btn-outline" onclick="addReciterSettings()">+ إضافة</button>
+    </div>
+  </div>
+</div>
+
+</main>
+<script>
+// DATA
+const SURAHS=[[1,"الفاتحة",7],[2,"البقرة",286],[3,"آل عمران",200],[4,"النساء",176],[5,"المائدة",120],[6,"الأنعام",165],[7,"الأعراف",206],[8,"الأنفال",75],[9,"التوبة",129],[10,"يونس",109],[11,"هود",123],[12,"يوسف",111],[13,"الرعد",43],[14,"إبراهيم",52],[15,"الحجر",99],[16,"النحل",128],[17,"الإسراء",111],[18,"الكهف",110],[19,"مريم",98],[20,"طه",135],[21,"الأنبياء",112],[22,"الحج",78],[23,"المؤمنون",118],[24,"النور",64],[25,"الفرقان",77],[26,"الشعراء",227],[27,"النمل",93],[28,"القصص",88],[29,"العنكبوت",69],[30,"الروم",60],[31,"لقمان",34],[32,"السجدة",30],[33,"الأحزاب",73],[34,"سبأ",54],[35,"فاطر",45],[36,"يس",83],[37,"الصافات",182],[38,"ص",88],[39,"الزمر",75],[40,"غافر",85],[41,"فصلت",54],[42,"الشورى",53],[43,"الزخرف",89],[44,"الدخان",59],[45,"الجاثية",37],[46,"الأحقاف",35],[47,"محمد",38],[48,"الفتح",29],[49,"الحجرات",18],[50,"ق",45],[51,"الذاريات",60],[52,"الطور",49],[53,"النجم",62],[54,"القمر",55],[55,"الرحمن",78],[56,"الواقعة",96],[57,"الحديد",29],[58,"المجادلة",22],[59,"الحشر",24],[60,"الممتحنة",13],[61,"الصف",14],[62,"الجمعة",11],[63,"المنافقون",11],[64,"التغابن",18],[65,"الطلاق",12],[66,"التحريم",12],[67,"الملك",30],[68,"القلم",52],[69,"الحاقة",52],[70,"المعارج",44],[71,"نوح",28],[72,"الجن",28],[73,"المزمل",20],[74,"المدثر",56],[75,"القيامة",40],[76,"الإنسان",31],[77,"المرسلات",50],[78,"النبأ",40],[79,"النازعات",46],[80,"عبس",42],[81,"التكوير",29],[82,"الانفطار",19],[83,"المطففين",36],[84,"الانشقاق",25],[85,"البروج",22],[86,"الطارق",17],[87,"الأعلى",19],[88,"الغاشية",26],[89,"الفجر",30],[90,"البلد",20],[91,"الشمس",15],[92,"الليل",21],[93,"الضحى",11],[94,"الشرح",8],[95,"التين",8],[96,"العلق",19],[97,"القدر",5],[98,"البينة",8],[99,"الزلزلة",8],[100,"العاديات",11],[101,"القارعة",11],[102,"التكاثر",8],[103,"العصر",3],[104,"الهمزة",9],[105,"الفيل",5],[106,"قريش",4],[107,"الماعون",7],[108,"الكوثر",3],[109,"الكافرون",6],[110,"النصر",3],[111,"المسد",5],[112,"الإخلاص",4],[113,"الفلق",5],[114,"الناس",6]];
+
+const TAFSIRS={ibn_ashur:{name:'ابن عاشور',prompt:'قدّم تفسيراً وافياً بأسلوب ابن عاشور في التحرير والتنوير، مع التركيز على الدلالات البلاغية والمعاني الدقيقة.'},ibn_kathir:{name:'ابن كثير',prompt:'قدّم تفسير الآية كما في تفسير ابن كثير، مع الاستشهاد بالأحاديث والآثار.'},tabari:{name:'الطبري',prompt:'قدّم تفسير الآية كما في جامع البيان للطبري، مع أقوال الصحابة والتابعين.'},saadi:{name:'السعدي',prompt:'قدّم تفسير الآية من تيسير الكريم الرحمن للسعدي بأسلوبه الميسّر التربوي.'},qurtubi:{name:'القرطبي',prompt:'قدّم تفسير الآية من الجامع لأحكام القرآن للقرطبي مع الأحكام الفقهية.'},baghawi:{name:'البغوي',prompt:'قدّم تفسير الآية من معالم التنزيل للبغوي بأسلوبه الجامع المختصر.'}};
+
+const DEFAULT_X=[{h:'Quraan_777',d:'تلاوات يومية'},{h:'Qurantilawat1',d:'تلاوات متنوعة'},{h:'agmalaltilawat',d:'أجمل التلاوات'},{h:'_listen2quran_',d:'استمع للقرآن'},{h:'abdullah11AA',d:'تلاوات مختارة'},{h:'QuranRecite24',d:'تلاوة 24 ساعة'},{h:'abdllhfrhan',d:'تلاوات يومية'},{h:'Mazameer',d:'مزامير'}];
+
+// STATE
+let curAyah=null,curTafsirKey='ibn_ashur',curTafsirTexts={};
+let pdfLib={};
+let reciters=['مشاري العفاسي','عبدالرحمن السديس','ماهر المعيقلي','سعد الغامدي','أبو بكر الشاطري'];
+let selReciters=['مشاري العفاسي'];
+let xAccounts=[...DEFAULT_X];
+let vidDur=0,trimS=0,trimE=0,dragging=null;
+
+// INIT
+document.addEventListener('DOMContentLoaded',()=>{
+  // Build surah list
+  const sel=document.getElementById('surahSel');
+  SURAHS.forEach(([n,name,cnt])=>{
+    const o=document.createElement('option');
+    o.value=String(n);
+    o.dataset.count=String(cnt);
+    o.textContent=n+'. سورة '+name+' ('+cnt+' آية)';
+    sel.appendChild(o);
+  });
+  loadSettings();
+  renderReciters();
+  renderXAccounts();
+  renderHistory();
+  setupPDFDrop();
+  buildWaveform();
+  loadPDFLib();
+});
+
+// TABS
+function showTab(name,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// COMPOSE
+function onSurahChange(){
+  const sel=document.getElementById('surahSel');
+  const opt=sel.options[sel.selectedIndex];
+  if(opt&&opt.dataset.count){
+    document.getElementById('ayahNum').max=opt.dataset.count;
+    document.getElementById('ayahNum').value='1';
+  }
+}
+
+function setProgress(step){
+  ['ps1','ps2','ps3'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    el.className='progress-step';
+    if(i+1<step)el.classList.add('done');
+    else if(i+1===step)el.classList.add('active');
+  });
+}
+
+async function fetchAyah(){
+  const sn=document.getElementById('surahSel').value;
+  const an=parseInt(document.getElementById('ayahNum').value);
+  const err=document.getElementById('c1err');
+  err.classList.add('hidden');
+  if(!sn){err.textContent='الرجاء اختيار السورة';err.classList.remove('hidden');return;}
+  const surah=SURAHS.find(s=>String(s[0])===sn);
+  if(!surah||!an||an<1||an>surah[2]){err.textContent='رقم الآية غير صحيح (1-'+surah[2]+')';err.classList.remove('hidden');return;}
+  const btn=document.getElementById('fetchBtn');
+  btn.disabled=true;btn.textContent='⏳ جارٍ الجلب…';
+  try{
+    const r=await fetch('https://raw.githubusercontent.com/semarketir/quranjson/master/source/surah/surah_'+parseInt(sn)+'.json');
+    if(!r.ok)throw new Error('تعذّر الاتصال بالخادم');
+    const data=await r.json();
+    const txt=data.verse['verse_'+an];
+    if(!txt)throw new Error('لم يُعثر على الآية');
+    curAyah={surah:sn,surahName:surah[1],ayah:an,text:txt,total:surah[2]};
+    curTafsirTexts={};
+    document.getElementById('ayahTxt').textContent=txt;
+    document.getElementById('ayahRef').textContent='سورة '+surah[1]+' — الآية '+an;
+    buildTafsirTabs();
+    document.getElementById('c2').classList.remove('hidden');
+    document.getElementById('c3').classList.add('hidden');
+    setProgress(2);
+    document.getElementById('c2').scrollIntoView({behavior:'smooth',block:'start'});
+    const s=loadSettings();
+    curTafsirKey=s.defTafsir||'ibn_ashur';
+    document.querySelectorAll('.tafsir-tab').forEach(t=>{t.classList.toggle('active',t.dataset.key===curTafsirKey);});
+    fetchTafsir(curTafsirKey);
+  }catch(e){
+    err.textContent='خطأ: '+e.message;
+    err.classList.remove('hidden');
+  }finally{
+    btn.disabled=false;btn.textContent='🔍 جلب الآية والتفسير';
+  }
+}
+
+function buildTafsirTabs(){
+  document.getElementById('tafsirTabs').innerHTML=Object.entries(TAFSIRS).map(([k,t])=>'<div class="tafsir-tab'+(k===curTafsirKey?' active':'')+'" data-key="'+k+'" onclick="switchTafsir(\''+k+'\',this)">'+t.name+'</div>').join('');
+}
+
+function switchTafsir(key,el){
+  curTafsirKey=key;
+  document.querySelectorAll('.tafsir-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  if(curTafsirTexts[key]){
+    document.getElementById('tafsirTxt').textContent=curTafsirTexts[key];
+    document.getElementById('tafsirTxt').classList.remove('hidden');
+    document.getElementById('copyTafsirBtn').classList.remove('hidden');
+    document.getElementById('goTweetBtn').classList.remove('hidden');
+  }else{fetchTafsir(key);}
+}
+
+async function fetchTafsir(key){
+  const loadEl=document.getElementById('tafsirLoad');
+  const errEl=document.getElementById('tafsirErr');
+  const box=document.getElementById('tafsirTxt');
+  loadEl.classList.remove('hidden');
+  document.getElementById('tafsirMsg').textContent='جارٍ توليد تفسير '+TAFSIRS[key].name+'…';
+  errEl.classList.add('hidden');
+  box.classList.add('hidden');
+  document.getElementById('copyTafsirBtn').classList.add('hidden');
+  document.getElementById('goTweetBtn').classList.add('hidden');
+  let pdfCtx='';
+  if(key==='ibn_ashur'&&Object.keys(pdfLib).length>0){
+    const found=searchPDF(curAyah.surahName,curAyah.surah,curAyah.ayah);
+    if(found)pdfCtx='\n\nمقتطف من ملفات التفسير المرفوعة:\n'+found.substring(0,1500);
+  }
+  const prompt='أنت عالم متخصص في تفسير القرآن الكريم.\nالآية: '+curAyah.text+'\nالسورة والآية: سورة '+curAyah.surahName+' ('+curAyah.surah+':'+curAyah.ayah+')\n\n'+TAFSIRS[key].prompt+pdfCtx+'\n\nاكتب التفسير بالعربية الفصحى مباشرةً دون تقديم. فقرتان، 150-200 كلمة.';
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    const d=await resp.json();
+    const tafsir=d.content.map(c=>c.text||'').join('').trim();
+    if(!tafsir)throw new Error('لا توجد استجابة');
+    curTafsirTexts[key]=tafsir;
+    box.textContent=tafsir;
+    box.classList.remove('hidden');
+    document.getElementById('copyTafsirBtn').classList.remove('hidden');
+    document.getElementById('goTweetBtn').classList.remove('hidden');
+  }catch(e){
+    errEl.textContent='تعذّر التوليد: '+e.message;
+    errEl.classList.remove('hidden');
+    curTafsirTexts[key]='';
+    box.textContent='(تعذّر جلب التفسير — يمكنك المتابعة وتعديل التغريدة يدوياً)';
+    box.classList.remove('hidden');
+    document.getElementById('goTweetBtn').classList.remove('hidden');
+  }finally{loadEl.classList.add('hidden');}
+}
+
+async function goToTweet(){
+  document.getElementById('c3').classList.remove('hidden');
+  setProgress(3);
+  document.getElementById('c3').scrollIntoView({behavior:'smooth'});
+  await genTweet();
+}
+
+async function genTweet(){
+  const le=document.getElementById('tweetLoad'),ee=document.getElementById('tweetErr'),ar=document.getElementById('tweetArea');
+  le.classList.remove('hidden');ee.classList.add('hidden');ar.classList.add('hidden');
+  const s=loadSettings();
+  const tafsirTxt=curTafsirTexts[curTafsirKey]||'';
+  const tafsirName=TAFSIRS[curTafsirKey]?.name||'ابن عاشور';
+  const prompt='صِغ تغريدة عربية مؤثرة لحساب '+(s.handle||'@toptilawah')+':\nالآية: '+curAyah.text+'\nالمرجع: سورة '+curAyah.surahName+' ('+curAyah.surah+':'+curAyah.ayah+')\nالتفسير ('+tafsirName+'): '+tafsirTxt+'\n\nالقواعد:\n١. الآية بين ﴿ ﴾\n٢. المرجع بين قوسين\n٣. خلاصة التفسير في جملتين\n٤. سطر للفائدة يبدأ بـ ✦\n٥. هاشتاقات: #تلاوة #القرآن_الكريم #تفسير\n٦. لا تتجاوز 480 حرف\n٧. نص التغريدة فقط بلا تعليق';
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:700,messages:[{role:'user',content:prompt}]})});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    const d=await resp.json();
+    const tweet=d.content.map(c=>c.text||'').join('').trim();
+    document.getElementById('tweetBody').textContent=tweet;
+    updateCC();ar.classList.remove('hidden');
+    document.getElementById('twName').textContent=s.displayName||'Top Tilawah';
+    document.getElementById('twHandle').textContent=s.handle||'@toptilawah';
+  }catch(e){
+    ee.textContent='خطأ: '+e.message;ee.classList.remove('hidden');
+    const fb='﴿'+curAyah.text+'﴾\n\n(سورة '+curAyah.surahName+'، الآية '+curAyah.ayah+')\n\n'+tafsirTxt.substring(0,150)+'…\n\n#تلاوة #القرآن_الكريم #تفسير';
+    document.getElementById('tweetBody').textContent=fb;
+    updateCC();ar.classList.remove('hidden');
+  }finally{le.classList.add('hidden');}
+}
+
+function updateCC(){
+  const len=document.getElementById('tweetBody').textContent.length;
+  const el=document.getElementById('charCount');
+  el.textContent=len+' حرف';
+  el.className='char-count'+(len>280?' over':'');
+}
+
+function copyTweet(){navigator.clipboard.writeText(document.getElementById('tweetBody').textContent).then(()=>toast('✓ تم نسخ التغريدة'));}
+
+function saveThenSearch(){
+  saveToHistory();
+  if(curAyah){
+    const b=document.getElementById('xAyahBadge');
+    b.textContent='🎯 الآية: سورة '+curAyah.surahName+' — الآية '+curAyah.ayah;
+    b.classList.remove('hidden');
+  }
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-xsearch').classList.add('active');
+  document.querySelector('[data-tab="xsearch"]').classList.add('active');
+  genXLinks();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function resetStep1(){document.getElementById('c2').classList.add('hidden');document.getElementById('c3').classList.add('hidden');setProgress(1);curAyah=null;curTafsirTexts={};}
+
+// SUGGEST
+async function getSuggestions(){
+  const topic=document.getElementById('topicSel').value;
+  const le=document.getElementById('suggestLoad'),box=document.getElementById('suggestBox');
+  le.classList.remove('hidden');box.innerHTML='';
+  const prompt='اقترح 3 آيات قرآنية لموضوع "'+topic+'". أجب بـ JSON فقط:\n[{"surah_num":1,"surah_name":"اسم","ayah_num":1,"ayah_text":"النص","reason":"سبب"}]';
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+    const d=await resp.json();
+    const arr=JSON.parse(d.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim());
+    box.innerHTML=arr.map(s=>'<div class="suggestion-card" onclick="useSuggestion('+s.surah_num+','+s.ayah_num+')"><div class="sc-name">سورة '+s.surah_name+' · الآية '+s.ayah_num+' ← اضغط للاستخدام</div><div class="sc-reason">💡 '+s.reason+'</div><div class="sc-arabic">'+s.ayah_text+'</div></div>').join('');
+  }catch(e){box.innerHTML='<div class="alert alert-error">خطأ: '+e.message+'</div>';}
+  finally{le.classList.add('hidden');}
+}
+
+function useSuggestion(sn,an){
+  document.getElementById('surahSel').value=String(sn);
+  onSurahChange();
+  document.getElementById('ayahNum').value=String(an);
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-compose').classList.add('active');
+  document.querySelector('[data-tab="compose"]').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  fetchAyah();
+}
+
+// RECITERS
+function renderReciters(){
+  ['reciterChips','settingsChips'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    el.innerHTML=reciters.map(r=>'<div class="reciter-chip'+(selReciters.includes(r)?' selected':'')+'" onclick="toggleR(this,\''+escQ(r)+'\')" >'+r+' <span onclick="event.stopPropagation();removeR(\''+escQ(r)+'\')">×</span></div>').join('');
+  });
+}
+function escQ(s){return s.replace(/'/g,"\\'").replace(/"/g,'&quot;');}
+function toggleR(el,name){
+  if(selReciters.includes(name))selReciters=selReciters.filter(r=>r!==name);
+  else selReciters.push(name);
+  renderReciters();
+}
+function removeR(name){reciters=reciters.filter(r=>r!==name);selReciters=selReciters.filter(r=>r!==name);renderReciters();saveSettings();}
+function addReciter(){
+  const inp=document.getElementById('newReciter');
+  const name=inp.value.trim();
+  if(name&&!reciters.includes(name)){reciters.push(name);selReciters.push(name);inp.value='';renderReciters();saveSettings();toast('✓ تمت إضافة القارئ');}
+}
+function addReciterSettings(){
+  const inp=document.getElementById('settingsNewReciter');
+  const name=inp.value.trim();
+  if(name&&!reciters.includes(name)){reciters.push(name);inp.value='';renderReciters();saveSettings();toast('✓ تمت إضافة القارئ');}
+}
+
+// VIDEO LINKS
+function genVideoLinks(){
+  const box=document.getElementById('videoLinksBox');
+  if(!curAyah){box.innerHTML='<div class="alert alert-info" style="margin-top:0">اختر آية من تبويب إنشاء أولاً</div>';return;}
+  if(!selReciters.length){box.innerHTML='<div class="alert alert-error">اختر قارئاً واحداً على الأقل</div>';return;}
+  const sn=curAyah.surahName;
+  let h='<div class="card" style="margin-top:0"><div class="card-title">روابط البحث</div>';
+  selReciters.forEach(r=>{
+    const q=r+' سورة '+sn;
+    h+='<a class="x-search-link" href="https://x.com/search?q='+encodeURIComponent(q+' تلاوة')+'&f=video" target="_blank"><span class="x-badge">X</span>'+r+' — سورة '+sn+'</a>';
+    h+='<a class="x-search-link" href="https://www.tiktok.com/search?q='+encodeURIComponent(q)+'" target="_blank"><span class="platform-badge tiktok">TikTok</span>'+r+' — سورة '+sn+'</a>';
+    h+='<a class="x-search-link" href="https://www.youtube.com/results?search_query='+encodeURIComponent(q)+'" target="_blank"><span class="platform-badge yt">YouTube</span>'+r+' — سورة '+sn+'</a>';
+  });
+  h+='</div>';
+  box.innerHTML=h;
+}
+
+// X ACCOUNTS
+function renderXAccounts(){
+  const grid=document.getElementById('xAccountsGrid');
+  const list=document.getElementById('xAccList');
+  if(grid)grid.innerHTML=xAccounts.map(a=>'<div class="x-account-card"><a href="https://x.com/'+a.h+'" target="_blank"><div class="x-account-handle">@'+a.h+'</div><div class="x-account-desc">'+(a.d||'')+'</div></a></div>').join('');
+  if(list)list.innerHTML=xAccounts.map((a,i)=>'<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)"><span style="flex:1;font-size:12px;font-weight:700;color:var(--green)">@'+a.h+'</span><button class="btn-danger" onclick="removeXAcc('+i+')" style="padding:4px 9px;font-size:11px">×</button></div>').join('');
+}
+function genXLinks(){
+  const box=document.getElementById('xLinksBox');
+  if(!curAyah){box.innerHTML='<div class="alert alert-info">اختر آية من تبويب إنشاء أولاً</div>';return;}
+  const sn=curAyah.surahName;
+  let h='<div class="card"><div class="card-title">بحث في الحسابات</div>';
+  xAccounts.forEach(a=>{
+    const q=encodeURIComponent('سورة '+sn+' from:'+a.h);
+    h+='<a class="x-search-link" href="https://x.com/search?q='+q+'&f=video" target="_blank"><span class="x-badge">X</span><strong>@'+a.h+'</strong> — سورة '+sn+'</a>';
+  });
+  h+='<div class="section-label" style="margin-top:10px">بحث عام</div>';
+  h+='<a class="x-search-link" href="https://x.com/search?q='+encodeURIComponent('سورة '+sn+' تلاوة')+'&f=video" target="_blank"><span class="x-badge">X</span>بحث عام: سورة '+sn+'</a>';
+  h+='<a class="x-search-link" href="https://www.tiktok.com/search?q='+encodeURIComponent('سورة '+sn+' تلاوة')+'" target="_blank"><span class="platform-badge tiktok">TikTok</span>سورة '+sn+' تلاوة</a>';
+  h+='</div>';
+  box.innerHTML=h;
+}
+function addXAccount(){
+  const inp=document.getElementById('newXAcc');
+  let h=inp.value.trim().replace('@','');
+  if(h&&!xAccounts.find(a=>a.h===h)){xAccounts.push({h,d:'حساب مضاف'});inp.value='';renderXAccounts();saveSettings();toast('✓ تمت إضافة الحساب');}
+}
+function removeXAcc(i){xAccounts.splice(i,1);renderXAccounts();saveSettings();}
+
+// HISTORY
+function saveToHistory(){
+  if(!curAyah)return;
+  const hist=getHist();
+  if(!hist.find(h=>h.surah==curAyah.surah&&h.ayah==curAyah.ayah)){
+    hist.unshift({id:Date.now(),surah:curAyah.surah,surahName:curAyah.surahName,ayah:curAyah.ayah,text:curAyah.text,date:new Date().toLocaleDateString('ar-SA')});
+    localStorage.setItem('toptilawah_hist',JSON.stringify(hist.slice(0,300)));
+    renderHistory();toast('✓ تم الحفظ في السجل');
+  }
+}
+function getHist(){try{return JSON.parse(localStorage.getItem('toptilawah_hist')||'[]');}catch{return[];}}
+function renderHistory(){
+  const hist=getHist();
+  const box=document.getElementById('histBox');
+  if(!hist.length){box.innerHTML='<div class="empty"><div class="icon">📜</div>لا توجد آيات بعد</div>';return;}
+  box.innerHTML=hist.map(h=>'<div class="history-item"><div><div class="history-ref">'+h.surahName+' '+h.surah+':'+h.ayah+'</div><div class="history-date">'+h.date+'</div></div><div class="history-text">'+h.text.substring(0,70)+'…</div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn-copy" onclick="useSuggestion('+h.surah+','+h.ayah+')" title="إعادة استخدام">↩</button><button class="btn-danger" onclick="delHist('+h.id+')" style="padding:5px 9px">🗑</button></div></div>').join('');
+}
+function delHist(id){localStorage.setItem('toptilawah_hist',JSON.stringify(getHist().filter(h=>h.id!==id)));renderHistory();}
+function clearHistory(){if(confirm('مسح كل السجل؟')){localStorage.removeItem('toptilawah_hist');renderHistory();}}
+
+// SETTINGS
+function loadSettings(){
+  try{
+    const s=JSON.parse(localStorage.getItem('toptilawah_settings')||'{}');
+    if(s.reciters)reciters=s.reciters;
+    if(s.selReciters)selReciters=s.selReciters;
+    if(s.xAccounts)xAccounts=s.xAccounts;
+    const ha=document.getElementById('accHandle');
+    const na=document.getElementById('accName');
+    const dt=document.getElementById('defTafsir');
+    if(ha)ha.value=s.handle||'@toptilawah';
+    if(na)na.value=s.displayName||'Top Tilawah';
+    if(dt)dt.value=s.defTafsir||'ibn_ashur';
+    return s;
+  }catch(e){return{};}
+}
+function saveSettings(){
+  const ha=document.getElementById('accHandle');
+  const na=document.getElementById('accName');
+  const dt=document.getElementById('defTafsir');
+  const s={handle:ha?ha.value:'@toptilawah',displayName:na?na.value:'Top Tilawah',defTafsir:dt?dt.value:'ibn_ashur',reciters,selReciters,xAccounts};
+  localStorage.setItem('toptilawah_settings',JSON.stringify(s));
+  const dn=document.getElementById('twName');
+  const th=document.getElementById('twHandle');
+  if(dn)dn.textContent=s.displayName;
+  if(th)th.textContent=s.handle;
+  toast('✓ تم حفظ الإعدادات');
+  return s;
+}
+
+// PDF
+function setupPDFDrop(){
+  const dz=document.getElementById('pdfDrop');
+  if(!dz)return;
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('dragover');});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('dragover'));
+  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('dragover');if(e.dataTransfer.files.length)processPDFs(e.dataTransfer.files);});
+}
+async function handlePDFs(input){if(input.files.length)await processPDFs(input.files);}
+async function processPDFs(files){
+  const arr=Array.from(files).filter(f=>f.name.toLowerCase().endsWith('.pdf'));
+  if(!arr.length){toast('لم يتم اختيار ملفات PDF');return;}
+  toast('جارٍ معالجة '+arr.length+' ملف PDF…');
+  const list=document.getElementById('pdfList');
+  for(const file of arr){
+    const id='pdf_'+Date.now()+'_'+Math.random().toString(36).substr(2,4);
+    const item=document.createElement('div');
+    item.className='pdf-item';item.id=id;
+    item.innerHTML='<span>📄</span><span class="pname">'+file.name+'</span><span class="psize">'+Math.round(file.size/1024)+'KB</span><span class="pstat proc">⏳</span>';
+    list.appendChild(item);
+    try{
+      const text=await extractPDF(file);
+      pdfLib[file.name]=text;
+      item.querySelector('.pstat').textContent='✓ جاهز';
+      item.querySelector('.pstat').className='pstat done';
+    }catch(e){
+      item.querySelector('.pstat').textContent='✗ خطأ';
+      item.querySelector('.pstat').className='pstat err';
+    }
+  }
+  savePDFLib();
+  updatePDFSummary();
+}
+async function extractPDF(file){
+  return new Promise((res,rej)=>{
+    if(window.pdfjsLib){doPDFExtract(file,res,rej);}
+    else{
+      const s=document.createElement('script');
+      s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+      s.onload=()=>{
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        doPDFExtract(file,res,rej);
+      };
+      s.onerror=rej;
+      document.head.appendChild(s);
+    }
+  });
+}
+async function doPDFExtract(file,res,rej){
+  try{
+    const buf=await file.arrayBuffer();
+    const pdf=await window.pdfjsLib.getDocument({data:buf}).promise;
+    let txt='';
+    for(let i=1;i<=pdf.numPages;i++){
+      const page=await pdf.getPage(i);
+      const content=await page.getTextContent();
+      txt+=content.items.map(it=>it.str).join(' ')+'\n';
+    }
+    res(txt);
+  }catch(e){rej(e);}
+}
+function searchPDF(surahName,surahNum,ayahNum){
+  const all=Object.values(pdfLib).join('\n');
+  if(!all)return'';
+  const lines=all.split('\n');
+  const kw=[surahName,''+surahNum+':'+ayahNum,'الآية '+ayahNum];
+  let result='';
+  lines.forEach((line,i)=>{if(kw.some(k=>line.includes(k))&&line.length>10)result+=lines.slice(Math.max(0,i-1),Math.min(lines.length,i+15)).join('\n')+'\n---\n';});
+  return result.substring(0,2000);
+}
+function updatePDFSummary(){
+  const cnt=Object.keys(pdfLib).length;
+  const el=document.getElementById('pdfSummary');
+  if(cnt>0){el.className='pdf-summary';el.innerHTML='✓ تم تحميل <strong>'+cnt+'</strong> ملف PDF — جاهز للبحث';el.classList.remove('hidden');}
+  else el.classList.add('hidden');
+}
+function savePDFLib(){
+  try{
+    const idx=Object.keys(pdfLib).map(k=>({name:k,size:pdfLib[k].length}));
+    localStorage.setItem('toptilawah_pdf_idx',JSON.stringify(idx));
+    Object.entries(pdfLib).forEach(([k,v])=>{try{sessionStorage.setItem('pdf__'+k,v);}catch(e){}});
+  }catch(e){}
+}
+function loadPDFLib(){
+  try{
+    const idx=JSON.parse(sessionStorage.getItem('pdf_index')||localStorage.getItem('toptilawah_pdf_idx')||'[]');
+    if(Array.isArray(idx))idx.forEach(({name})=>{const t=sessionStorage.getItem('pdf__'+name);if(t)pdfLib[name]=t;});
+    if(Object.keys(pdfLib).length>0){
+      updatePDFSummary();
+      const list=document.getElementById('pdfList');
+      Object.keys(pdfLib).forEach(name=>{const item=document.createElement('div');item.className='pdf-item';item.innerHTML='<span>📄</span><span class="pname">'+name+'</span><span class="pstat done">✓</span>';list.appendChild(item);});
+    }
+  }catch(e){}
+}
+function clearPDFs(){if(confirm('مسح كل ملفات PDF؟')){pdfLib={};Object.keys(sessionStorage).filter(k=>k.startsWith('pdf__')).forEach(k=>sessionStorage.removeItem(k));localStorage.removeItem('toptilawah_pdf_idx');document.getElementById('pdfList').innerHTML='';updatePDFSummary();toast('✓ تم مسح المكتبة');}}
+function testPDF(){if(!Object.keys(pdfLib).length){toast('ارفع ملفات PDF أولاً');return;}const r=searchPDF('البقرة','2',255);alert(r?'نتيجة بحث آية الكرسي:\n\n'+r.substring(0,400)+'…':'لم يُعثر على نتائج');}
+
+// VIDEO
+function buildWaveform(){
+  const wf=document.getElementById('tlWave');
+  if(!wf)return;
+  wf.innerHTML='';
+  for(let i=0;i<80;i++){const b=document.createElement('div');b.style.height=Math.random()*70+15+'%';wf.appendChild(b);}
+}
+function loadVid(input){
+  const file=input.files[0];
+  if(!file)return;
+  const vid=document.getElementById('videoEl');
+  vid.src=URL.createObjectURL(file);
+  vid.style.display='block';
+  document.getElementById('vidPlaceholder').style.display='none';
+  toast('✓ تم تحميل الفيديو');
+}
+function onVidLoaded(){
+  const vid=document.getElementById('videoEl');
+  vidDur=vid.duration;trimS=0;trimE=vidDur;
+  document.getElementById('vidControls').classList.remove('hidden');
+  document.getElementById('tsInput').value='0';
+  document.getElementById('tsInput').max=vidDur;
+  document.getElementById('teInput').value=vidDur.toFixed(1);
+  document.getElementById('teInput').max=vidDur;
+  updateTrimUI();buildWaveform();
+}
+function onVidTime(){
+  const vid=document.getElementById('videoEl');
+  const pct=vid.duration?vid.currentTime/vid.duration*100:0;
+  document.getElementById('pbFill').style.width=pct+'%';
+  document.getElementById('curTime').textContent=fmt(vid.currentTime);
+  if(vid.currentTime>=trimE){vid.pause();document.getElementById('playBtn').textContent='▶️';}
+}
+function togglePlay(){
+  const vid=document.getElementById('videoEl');
+  if(vid.paused){if(vid.currentTime>=trimE)vid.currentTime=trimS;vid.play();document.getElementById('playBtn').textContent='⏸';}
+  else{vid.pause();document.getElementById('playBtn').textContent='▶️';}
+}
+function seekVid(e){const vid=document.getElementById('videoEl');vid.currentTime=(e.offsetX/e.currentTarget.offsetWidth)*vid.duration;}
+function fmt(s){if(isNaN(s))return'0:00';return Math.floor(s/60)+':'+(Math.floor(s%60)).toString().padStart(2,'0');}
+function updateTrimUI(){
+  if(!vidDur)return;
+  const ls=trimS/vidDur*100,rs=(1-trimE/vidDur)*100;
+  document.getElementById('hLeft').style.left=ls+'%';
+  document.getElementById('hRight').style.right=rs+'%';
+  document.getElementById('trimSel').style.left=ls+'%';
+  document.getElementById('trimSel').style.right=rs+'%';
+  document.getElementById('tsLabel').textContent='البداية: '+fmt(trimS);
+  document.getElementById('teLabel').textContent='النهاية: '+fmt(trimE);
+  document.getElementById('tdLabel').textContent='المدة: '+fmt(trimE-trimS);
+  document.getElementById('tsInput').value=trimS.toFixed(1);
+  document.getElementById('teInput').value=trimE.toFixed(1);
+}
+function onTrimChange(){
+  const s=parseFloat(document.getElementById('tsInput').value)||0;
+  const e=parseFloat(document.getElementById('teInput').value)||vidDur;
+  trimS=Math.max(0,Math.min(s,vidDur-0.5));
+  trimE=Math.max(trimS+0.5,Math.min(e,vidDur));
+  updateTrimUI();
+}
+function startDrag(side,e){
+  e.preventDefault();dragging=side;
+  document.addEventListener('mousemove',doDrag);document.addEventListener('mouseup',stopDrag);
+  document.addEventListener('touchmove',doDrag,{passive:false});document.addEventListener('touchend',stopDrag);
+}
+function doDrag(e){
+  if(!dragging)return;e.preventDefault();
+  const rect=document.getElementById('tlWrap').getBoundingClientRect();
+  const cx=e.touches?e.touches[0].clientX:e.clientX;
+  const t=Math.max(0,Math.min(1,(cx-rect.left)/rect.width))*vidDur;
+  if(dragging==='left')trimS=Math.max(0,Math.min(t,trimE-0.5));
+  else trimE=Math.max(trimS+0.5,Math.min(t,vidDur));
+  updateTrimUI();
+}
+function stopDrag(){dragging=null;document.removeEventListener('mousemove',doDrag);document.removeEventListener('mouseup',stopDrag);document.removeEventListener('touchmove',doDrag);document.removeEventListener('touchend',stopDrag);}
+function previewTrim(){const vid=document.getElementById('videoEl');vid.currentTime=trimS;vid.play();document.getElementById('playBtn').textContent='⏸';}
+async function exportTrim(){
+  const vid=document.getElementById('videoEl');
+  if(!vid.src||!vidDur){toast('ارفع فيديو أولاً');return;}
+  const dur=trimE-trimS;
+  const pe=document.getElementById('expProg'),fe=document.getElementById('expFill'),se=document.getElementById('expStat'),da=document.getElementById('dlArea');
+  pe.style.display='block';da.innerHTML='';fe.style.width='10%';se.textContent='جارٍ التحضير…';
+  try{
+    const canvas=document.createElement('canvas');
+    canvas.width=vid.videoWidth||1280;canvas.height=vid.videoHeight||720;
+    const ctx=canvas.getContext('2d');
+    const mime=MediaRecorder.isTypeSupported('video/webm;codecs=vp9')?'video/webm;codecs=vp9':'video/webm';
+    const stream=canvas.captureStream(30);
+    const chunks=[];
+    const rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:4000000});
+    rec.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
+    fe.style.width='20%';se.textContent='جارٍ معالجة المقطع…';
+    await new Promise((res,rej)=>{
+      rec.onstop=res;rec.onerror=rej;rec.start(100);
+      vid.currentTime=trimS;
+      let t0=null;
+      function draw(ts){
+        if(!t0)t0=ts;
+        const el=(ts-t0)/1000;
+        fe.style.width=Math.min(20+el/dur*70,90)+'%';
+        if(vid.currentTime>=trimE-0.05||el>=dur+0.2){rec.stop();return;}
+        ctx.drawImage(vid,0,0,canvas.width,canvas.height);
+        requestAnimationFrame(draw);
+      }
+      vid.play().then(()=>requestAnimationFrame(draw)).catch(rej);
+    });
+    fe.style.width='95%';se.textContent='جارٍ إنشاء الملف…';
+    await new Promise(r=>setTimeout(r,300));
+    const blob=new Blob(chunks,{type:mime});
+    const url=URL.createObjectURL(blob);
+    const name='tilawah_'+(curAyah?curAyah.surahName+'_'+curAyah.ayah:'clip')+'.webm';
+    fe.style.width='100%';se.textContent='✓ اكتملت المعالجة!';
+    da.innerHTML='<a class="dl-link" href="'+url+'" download="'+name+'">⬇ تحميل المقطع ('+fmt(dur)+')</a>';
+    toast('✓ تم التصدير');
+  }catch(e){
+    se.textContent='خطأ: '+e.message;
+    da.innerHTML='<div class="alert alert-info" style="margin-top:8px">⚠️ جرّب <a href="https://clideo.com/cut-video" target="_blank" style="color:var(--green);font-weight:700">Clideo.com</a> للقص من '+fmt(trimS)+' إلى '+fmt(trimE)+'</div>';
+  }
+}
+
+// UTILS
+function copyEl(id){navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>toast('✓ تم النسخ'));}
+function toast(msg){const o=document.querySelector('.toast');if(o)o.remove();const el=document.createElement('div');el.className='toast';el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),2500);}
+</script>
+</body>
+</html>
